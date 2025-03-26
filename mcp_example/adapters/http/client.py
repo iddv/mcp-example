@@ -26,6 +26,7 @@ from mcp_example.core.schema import (
     ToolResponse,
     StreamingChunk,
 )
+from mcp_example.adapters.http.cache import ToolCache
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +41,9 @@ class MCPClient:
         timeout: float = 30.0,
         max_retries: int = 3,
         retry_delay: float = 1.0,
+        cache_enabled: bool = True,
+        cache_max_size: int = 100,
+        cache_ttl: float = 300.0,
     ):
         """
         Initialize an MCP client.
@@ -50,6 +54,9 @@ class MCPClient:
             timeout: Request timeout in seconds
             max_retries: Maximum number of retries for failed requests
             retry_delay: Delay between retries in seconds
+            cache_enabled: Whether to enable result caching
+            cache_max_size: Maximum number of entries in the cache
+            cache_ttl: Default time to live for cache entries in seconds
         """
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key
@@ -64,6 +71,13 @@ class MCPClient:
         self.headers = {"Content-Type": "application/json"}
         if api_key:
             self.headers["X-API-Key"] = api_key
+            
+        # Initialize cache
+        self.cache = ToolCache(
+            max_size=cache_max_size,
+            ttl=cache_ttl,
+            enabled=cache_enabled,
+        )
 
     def close(self) -> None:
         """Close the HTTP client."""
@@ -110,7 +124,7 @@ class MCPClient:
         return FunctionDefinition(**response.json())
 
     def call_function(
-        self, name: str, parameters: Dict[str, Any]
+        self, name: str, parameters: Dict[str, Any], use_cache: bool = True
     ) -> FunctionResponse:
         """
         Call a function on the server.
@@ -118,6 +132,7 @@ class MCPClient:
         Args:
             name: Name of the function to call
             parameters: Parameters for the function call
+            use_cache: Whether to use cached results if available
 
         Returns:
             Function response
@@ -126,15 +141,29 @@ class MCPClient:
             HTTPError: If the request fails
             ValidationError: If the response is invalid
         """
+        # Check cache first if enabled
+        if use_cache:
+            cached_result = self.cache.get(name, parameters)
+            if cached_result is not None and isinstance(cached_result, FunctionResponse):
+                logger.debug(f"Cache hit for function {name}")
+                return cached_result
+                
         data = {
             "name": name,
             "parameters": parameters,
         }
         response = self._make_request("POST", "/api/functions/call", json=data)
-        return FunctionResponse(**response.json())
+        result = FunctionResponse(**response.json())
+        
+        # Cache the result
+        if use_cache:
+            self.cache.set(name, parameters, result)
+            
+        return result
 
     def call_tool(
-        self, name: str, parameters: Dict[str, Any], call_id: Optional[str] = None
+        self, name: str, parameters: Dict[str, Any], call_id: Optional[str] = None,
+        use_cache: bool = True
     ) -> ToolResponse:
         """
         Call a tool on the server.
@@ -143,6 +172,7 @@ class MCPClient:
             name: Name of the function to call
             parameters: Parameters for the function call
             call_id: Optional ID for the tool call
+            use_cache: Whether to use cached results if available
 
         Returns:
             Tool response
@@ -151,6 +181,13 @@ class MCPClient:
             HTTPError: If the request fails
             ValidationError: If the response is invalid
         """
+        # Check cache first if enabled
+        if use_cache:
+            cached_result = self.cache.get(name, parameters)
+            if cached_result is not None and isinstance(cached_result, ToolResponse):
+                logger.debug(f"Cache hit for tool {name}")
+                return cached_result
+                
         data = {
             "id": call_id,
             "function": {
@@ -159,7 +196,13 @@ class MCPClient:
             },
         }
         response = self._make_request("POST", "/api/tools/call", json=data)
-        return ToolResponse(**response.json())
+        result = ToolResponse(**response.json())
+        
+        # Cache the result
+        if use_cache:
+            self.cache.set(name, parameters, result)
+            
+        return result
 
     def execute_from_text(self, text: str) -> FunctionResponse:
         """
@@ -234,6 +277,23 @@ class MCPClient:
         assert last_error is not None
         raise last_error
 
+    def clear_cache(self) -> None:
+        """Clear the client's result cache."""
+        self.cache.clear()
+        
+    def invalidate_cache_entry(self, name: str, parameters: Dict[str, Any]) -> bool:
+        """
+        Invalidate a specific cache entry.
+        
+        Args:
+            name: Name of the function
+            parameters: Parameters for the function call
+            
+        Returns:
+            True if an entry was invalidated, False otherwise
+        """
+        return self.cache.invalidate(name, parameters)
+
 
 class AsyncMCPClient:
     """Asynchronous client for calling remote MCP servers with WebSocket support."""
@@ -245,6 +305,9 @@ class AsyncMCPClient:
         timeout: float = 30.0,
         max_retries: int = 3,
         retry_delay: float = 1.0,
+        cache_enabled: bool = True,
+        cache_max_size: int = 100,
+        cache_ttl: float = 300.0,
     ):
         """
         Initialize an async MCP client.
@@ -255,6 +318,9 @@ class AsyncMCPClient:
             timeout: Request timeout in seconds
             max_retries: Maximum number of retries for failed requests
             retry_delay: Delay between retries in seconds
+            cache_enabled: Whether to enable result caching
+            cache_max_size: Maximum number of entries in the cache
+            cache_ttl: Default time to live for cache entries in seconds
         """
         self.base_url = base_url.rstrip("/")
         self.ws_url = self.base_url.replace("http://", "ws://").replace("https://", "wss://")
@@ -270,6 +336,13 @@ class AsyncMCPClient:
         self.headers = {"Content-Type": "application/json"}
         if api_key:
             self.headers["X-API-Key"] = api_key
+            
+        # Initialize cache
+        self.cache = ToolCache(
+            max_size=cache_max_size,
+            ttl=cache_ttl,
+            enabled=cache_enabled,
+        )
 
     async def close(self) -> None:
         """Close the HTTP client."""
@@ -316,7 +389,7 @@ class AsyncMCPClient:
         return FunctionDefinition(**response.json())
 
     async def call_function(
-        self, name: str, parameters: Dict[str, Any]
+        self, name: str, parameters: Dict[str, Any], use_cache: bool = True
     ) -> FunctionResponse:
         """
         Call a function on the server.
@@ -324,6 +397,7 @@ class AsyncMCPClient:
         Args:
             name: Name of the function to call
             parameters: Parameters for the function call
+            use_cache: Whether to use cached results if available
 
         Returns:
             Function response
@@ -332,15 +406,29 @@ class AsyncMCPClient:
             HTTPError: If the request fails
             ValidationError: If the response is invalid
         """
+        # Check cache first if enabled
+        if use_cache:
+            cached_result = self.cache.get(name, parameters)
+            if cached_result is not None and isinstance(cached_result, FunctionResponse):
+                logger.debug(f"Cache hit for function {name}")
+                return cached_result
+                
         data = {
             "name": name,
             "parameters": parameters,
         }
         response = await self._make_request("POST", "/api/functions/call", json=data)
-        return FunctionResponse(**response.json())
+        result = FunctionResponse(**response.json())
+        
+        # Cache the result
+        if use_cache:
+            self.cache.set(name, parameters, result)
+            
+        return result
 
     async def call_tool(
-        self, name: str, parameters: Dict[str, Any], call_id: Optional[str] = None
+        self, name: str, parameters: Dict[str, Any], call_id: Optional[str] = None,
+        use_cache: bool = True
     ) -> ToolResponse:
         """
         Call a tool on the server.
@@ -349,6 +437,7 @@ class AsyncMCPClient:
             name: Name of the function to call
             parameters: Parameters for the function call
             call_id: Optional ID for the tool call
+            use_cache: Whether to use cached results if available
 
         Returns:
             Tool response
@@ -357,6 +446,13 @@ class AsyncMCPClient:
             HTTPError: If the request fails
             ValidationError: If the response is invalid
         """
+        # Check cache first if enabled
+        if use_cache:
+            cached_result = self.cache.get(name, parameters)
+            if cached_result is not None and isinstance(cached_result, ToolResponse):
+                logger.debug(f"Cache hit for tool {name}")
+                return cached_result
+                
         data = {
             "id": call_id,
             "function": {
@@ -365,7 +461,13 @@ class AsyncMCPClient:
             },
         }
         response = await self._make_request("POST", "/api/tools/call", json=data)
-        return ToolResponse(**response.json())
+        result = ToolResponse(**response.json())
+        
+        # Cache the result
+        if use_cache:
+            self.cache.set(name, parameters, result)
+            
+        return result
 
     async def stream_function(
         self, name: str, parameters: Dict[str, Any]
@@ -581,4 +683,21 @@ class AsyncMCPClient:
         
         # This should not happen, but just in case
         assert last_error is not None
-        raise last_error 
+        raise last_error
+
+    def clear_cache(self) -> None:
+        """Clear the client's result cache."""
+        self.cache.clear()
+        
+    def invalidate_cache_entry(self, name: str, parameters: Dict[str, Any]) -> bool:
+        """
+        Invalidate a specific cache entry.
+        
+        Args:
+            name: Name of the function
+            parameters: Parameters for the function call
+            
+        Returns:
+            True if an entry was invalidated, False otherwise
+        """
+        return self.cache.invalidate(name, parameters) 
