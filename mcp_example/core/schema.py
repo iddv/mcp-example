@@ -121,4 +121,19 @@ class ToolResponse(BaseModel):
     """Response from a tool call."""
 
     id: str = Field(..., description="Identifier matching the tool call ID")
-    function: FunctionResponse = Field(..., description="Function response") 
+    function: FunctionResponse = Field(..., description="Function response")
+
+
+# Streaming Response Schema
+
+class StreamingChunk(BaseModel):
+    """Chunk of a streaming response."""
+
+    chunk_id: str = Field(..., description="Unique identifier for the chunk")
+    call_id: str = Field(..., description="ID of the function or tool call")
+    content: Any = Field(..., description="Content of the chunk")
+    is_final: bool = Field(False, description="Whether this is the final chunk")
+    error: Optional[str] = Field(None, description="Error message if an error occurred")
+    status: Literal["success", "error"] = Field(
+        "success", description="Status of the chunk"
+    ) 

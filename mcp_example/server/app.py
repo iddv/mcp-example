@@ -10,7 +10,7 @@ import uuid
 from typing import Any, Dict, List, Optional, Union
 
 import fastapi
-from fastapi import Body, Depends, FastAPI, HTTPException, Request, status
+from fastapi import Body, Depends, FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -25,6 +25,7 @@ from mcp_example.core.schema import (
     Tool,
     ToolCall,
     ToolResponse,
+    StreamingChunk,
 )
 from mcp_example.tools import register_all_tools
 
@@ -242,6 +243,248 @@ async def execute_from_text(
         )
     
     return response
+
+
+# WebSocket routes
+
+@app.websocket("/api/functions/stream")
+async def stream_function(websocket: WebSocket):
+    """
+    Stream function execution results.
+
+    Args:
+        websocket: WebSocket connection
+    """
+    await websocket.accept()
+    
+    try:
+        # Receive function call request
+        data = await websocket.receive_text()
+        request_data = json.loads(data)
+        
+        # Validate request
+        if "name" not in request_data or "parameters" not in request_data:
+            error_response = StreamingChunk(
+                chunk_id=str(uuid.uuid4()),
+                call_id=str(uuid.uuid4()),
+                content=None,
+                is_final=True,
+                error="Invalid request format. Must include 'name' and 'parameters'.",
+                status="error"
+            )
+            await websocket.send_text(json.dumps(error_response.model_dump()))
+            return
+        
+        # Extract function call details
+        func_name = request_data["name"]
+        parameters = request_data["parameters"]
+        call_id = request_data.get("id", str(uuid.uuid4()))
+        
+        # Check if function exists
+        func_def = registry.get_function_definition(func_name)
+        if not func_def:
+            error_response = StreamingChunk(
+                chunk_id=str(uuid.uuid4()),
+                call_id=call_id,
+                content=None,
+                is_final=True,
+                error=f"Function '{func_name}' not found",
+                status="error"
+            )
+            await websocket.send_text(json.dumps(error_response.model_dump()))
+            return
+        
+        # Create function call
+        func_call = FunctionCall(name=func_name, parameters=parameters)
+        
+        # Execute function and stream results
+        # For now, we'll simulate streaming by sending the entire result at once
+        # In a real implementation, the executor would support streaming natively
+        try:
+            response = executor.execute_function(func_call)
+            
+            # Send a single chunk with the complete result
+            chunk = StreamingChunk(
+                chunk_id=str(uuid.uuid4()),
+                call_id=call_id,
+                content=response.result,
+                is_final=True,
+                status="success"
+            )
+            
+            await websocket.send_text(json.dumps(chunk.model_dump()))
+            
+        except Exception as e:
+            # Send error response
+            error_response = StreamingChunk(
+                chunk_id=str(uuid.uuid4()),
+                call_id=call_id,
+                content=None,
+                is_final=True,
+                error=str(e),
+                status="error"
+            )
+            await websocket.send_text(json.dumps(error_response.model_dump()))
+    
+    except WebSocketDisconnect:
+        logger.warning("WebSocket client disconnected")
+    except json.JSONDecodeError:
+        # Handle invalid JSON
+        try:
+            error_response = StreamingChunk(
+                chunk_id=str(uuid.uuid4()),
+                call_id=str(uuid.uuid4()),
+                content=None,
+                is_final=True,
+                error="Invalid JSON in request",
+                status="error"
+            )
+            await websocket.send_text(json.dumps(error_response.model_dump()))
+        except Exception:
+            pass
+    except Exception as e:
+        # Handle other errors
+        try:
+            logger.exception("Error in WebSocket handler")
+            error_response = StreamingChunk(
+                chunk_id=str(uuid.uuid4()),
+                call_id=str(uuid.uuid4()),
+                content=None,
+                is_final=True,
+                error=f"Internal server error: {str(e)}",
+                status="error"
+            )
+            await websocket.send_text(json.dumps(error_response.model_dump()))
+        except Exception:
+            pass
+
+
+@app.websocket("/api/tools/stream")
+async def stream_tool(websocket: WebSocket):
+    """
+    Stream tool execution results.
+
+    Args:
+        websocket: WebSocket connection
+    """
+    await websocket.accept()
+    
+    try:
+        # Receive tool call request
+        data = await websocket.receive_text()
+        request_data = json.loads(data)
+        
+        # Validate request
+        if "function" not in request_data or not isinstance(request_data["function"], dict):
+            error_response = StreamingChunk(
+                chunk_id=str(uuid.uuid4()),
+                call_id=str(uuid.uuid4()),
+                content=None,
+                is_final=True,
+                error="Invalid request format. Must include 'function' object.",
+                status="error"
+            )
+            await websocket.send_text(json.dumps(error_response.model_dump()))
+            return
+        
+        function_data = request_data["function"]
+        if "name" not in function_data or "parameters" not in function_data:
+            error_response = StreamingChunk(
+                chunk_id=str(uuid.uuid4()),
+                call_id=str(uuid.uuid4()),
+                content=None,
+                is_final=True,
+                error="Invalid function format. Must include 'name' and 'parameters'.",
+                status="error"
+            )
+            await websocket.send_text(json.dumps(error_response.model_dump()))
+            return
+        
+        # Extract tool call details
+        func_name = function_data["name"]
+        parameters = function_data["parameters"]
+        call_id = request_data.get("id", str(uuid.uuid4()))
+        
+        # Check if function exists
+        func_def = registry.get_function_definition(func_name)
+        if not func_def:
+            error_response = StreamingChunk(
+                chunk_id=str(uuid.uuid4()),
+                call_id=call_id,
+                content=None,
+                is_final=True,
+                error=f"Function '{func_name}' not found",
+                status="error"
+            )
+            await websocket.send_text(json.dumps(error_response.model_dump()))
+            return
+        
+        # Create tool call
+        tool_call = ToolCall(
+            id=call_id,
+            function=FunctionCall(name=func_name, parameters=parameters),
+        )
+        
+        # Execute tool and stream results
+        # For now, we'll simulate streaming by sending the entire result at once
+        # In a real implementation, the executor would support streaming natively
+        try:
+            response = executor.execute_tool_call(tool_call)
+            
+            # Send a single chunk with the complete result
+            chunk = StreamingChunk(
+                chunk_id=str(uuid.uuid4()),
+                call_id=call_id,
+                content=response.function.result,
+                is_final=True,
+                status="success"
+            )
+            
+            await websocket.send_text(json.dumps(chunk.model_dump()))
+            
+        except Exception as e:
+            # Send error response
+            error_response = StreamingChunk(
+                chunk_id=str(uuid.uuid4()),
+                call_id=call_id,
+                content=None,
+                is_final=True,
+                error=str(e),
+                status="error"
+            )
+            await websocket.send_text(json.dumps(error_response.model_dump()))
+    
+    except WebSocketDisconnect:
+        logger.warning("WebSocket client disconnected")
+    except json.JSONDecodeError:
+        # Handle invalid JSON
+        try:
+            error_response = StreamingChunk(
+                chunk_id=str(uuid.uuid4()),
+                call_id=str(uuid.uuid4()),
+                content=None,
+                is_final=True,
+                error="Invalid JSON in request",
+                status="error"
+            )
+            await websocket.send_text(json.dumps(error_response.model_dump()))
+        except Exception:
+            pass
+    except Exception as e:
+        # Handle other errors
+        try:
+            logger.exception("Error in WebSocket handler")
+            error_response = StreamingChunk(
+                chunk_id=str(uuid.uuid4()),
+                call_id=str(uuid.uuid4()),
+                content=None,
+                is_final=True,
+                error=f"Internal server error: {str(e)}",
+                status="error"
+            )
+            await websocket.send_text(json.dumps(error_response.model_dump()))
+        except Exception:
+            pass
 
 
 # Error handling
