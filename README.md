@@ -226,14 +226,6 @@ Transform operations:
 Text analysis:
 - Provides statistics about text (character count, word count, etc.)
 
-## Documentation
-
-Detailed documentation is available in the `llm/` directory:
-- `plan.md`: Implementation plan
-- `progress.md`: Current implementation status
-- `decisions.md`: Key design decisions
-- `challenges.md`: Implementation challenges and solutions
-
 ## Contributing
 
 1. Fork the repository
