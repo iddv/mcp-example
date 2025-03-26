@@ -97,6 +97,17 @@ def validate_function_definition(definition: Union[Dict[str, Any], FunctionDefin
         else:
             func_def = definition
 
+        # Validate that name and description are not empty
+        if not func_def.name:
+            raise ValidationException("Function name must not be empty")
+        
+        if not func_def.description:
+            raise ValidationException("Function description must not be empty")
+        
+        # Validate parameters schema
+        if not func_def.parameters.properties:
+            raise ValidationException("Function must have at least one parameter")
+            
         # Additional validation can be added here if needed
     except PydanticValidationError as e:
         raise ValidationException(

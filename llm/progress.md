@@ -5,6 +5,8 @@
 - Added CLI interface for local tool usage
 - Implemented FastAPI server for remote tool access
 - Created HTTP client for remote server interaction
+- Implemented proxy tool for remote server integration
+- Added unit tests for core functionality and proxy tool
 
 ## Completed Tasks
 - [x] Project directory structure created (2024-05-22)
@@ -25,12 +27,12 @@
 - [x] Phase 3.4: Add request validation (2024-05-22)
 - [x] Phase 3.5: Implement error handling (2024-05-22)
 - [x] Phase 4.1: Create HTTP client (2024-05-22)
+- [x] Phase 4.2: Implement proxy tool for remote servers (2024-05-26)
 
 ## In Progress
-- [ ] Phase 4.2: Implement proxy tool for remote servers
+- [ ] Phase 4.3: Add WebSocket support for streaming
 
 ## Next Up
-- [ ] Phase 4.3: Add WebSocket support for streaming
 - [ ] Phase 4.4: Create tool chaining example
 - [ ] Phase 4.5: Implement tool result caching (optional)
 - [ ] Phase 5: AWS Bedrock Integration
@@ -59,7 +61,7 @@
 
 ## Phase 4: Remote Tool Integration
 - [x] 4.1 Create HTTP client for calling remote MCP servers
-- [ ] 4.2 Implement proxy tool that forwards requests to remote servers
+- [x] 4.2 Implement proxy tool that forwards requests to remote servers
 - [ ] 4.3 Add WebSocket support for streaming interactions
 - [ ] 4.4 Create example of chaining local and remote tools
 - [ ] 4.5 Implement tool result caching (optional)

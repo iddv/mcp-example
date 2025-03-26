@@ -22,6 +22,10 @@ def register_all_tools() -> None:
     # Import and register text tool
     from mcp_example.tools import text
     text.register()
+    
+    # Import and register proxy tool
+    from mcp_example.tools import proxy
+    proxy.register()
 
     logger.info(f"Registered {len(registry.list_tools())} tools")
 
