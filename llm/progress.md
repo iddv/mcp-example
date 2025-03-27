@@ -10,6 +10,7 @@
 - Created tool chaining example for combining local and remote tools
 - Added unit tests for core functionality, proxy tool, and WebSocket streaming
 - Implemented tool result caching for improved performance
+- Set up AWS Bedrock client for AWS integration
 
 ## Completed Tasks
 - [x] Project directory structure created (2024-05-22)
@@ -34,12 +35,13 @@
 - [x] Phase 4.3: Add WebSocket support for streaming (2024-05-26)
 - [x] Phase 4.4: Create tool chaining example (2024-05-26)
 - [x] Phase 4.5: Implement tool result caching (2024-06-06)
+- [x] Phase 5.1: Set up AWS Bedrock client (2024-06-10)
 
 ## In Progress
-- [ ] Phase 5.1: Set up AWS Bedrock client
+- [ ] Phase 5.2: Create Claude 3.7 integration adapter
 
 ## Next Up
-- [ ] Phase 5.2: Create Claude 3.7 integration adapter
+- [ ] Phase 5.3: Implement streaming response handling
 - [ ] Phase 6: Documentation and Examples
 
 ## Phase 1: Core Protocol Implementation
@@ -71,7 +73,7 @@
 - [x] 4.5 Implement tool result caching
 
 ## Phase 5: AWS Bedrock Integration
-- [ ] 5.1 Set up AWS Bedrock client
+- [x] 5.1 Set up AWS Bedrock client
 - [ ] 5.2 Create Claude 3.7 integration adapter
 - [ ] 5.3 Implement streaming response handling
 - [ ] 5.4 Create example conversation flow with tool usage
