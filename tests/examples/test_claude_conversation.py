@@ -55,25 +55,20 @@ def mock_claude_adapter():
     
     # Configure the mock for generate_with_streaming method
     async def mock_streaming(*args, **kwargs):
+        # First chunk with text content
         yield StreamingChunk(
-            id="msg_01234567890123456789",
-            type="message_start",
-            text="I'll calculate that for you."
+            chunk_id="chunk_text_001",
+            call_id="call_001",
+            content="I'll calculate that for you.",
+            is_final=False
         )
+        
+        # Final chunk that will trigger function call extraction
         yield StreamingChunk(
-            id="msg_01234567890123456789",
-            type="content_block_start",
-            text=""
-        )
-        yield StreamingChunk(
-            id="msg_01234567890123456789",
-            type="content_block_delta",
-            text="I'll calculate that for you."
-        )
-        yield StreamingChunk(
-            id="msg_01234567890123456789",
-            type="tool_use",
-            function_calls=[function_call]
+            chunk_id="chunk_final_002",
+            call_id="call_001",
+            content="I'll calculate that for you.",  # Repeated content for final chunk
+            is_final=True
         )
     
     mock_adapter.generate_with_streaming.side_effect = mock_streaming
@@ -86,7 +81,7 @@ async def test_conversation_with_tools_non_streaming(mock_claude_adapter):
     """Test conversation flow with tools using non-streaming mode."""
     with patch('mcp_example.examples.claude_conversation.AsyncClaudeAdapter', return_value=mock_claude_adapter), \
          patch('mcp_example.examples.claude_conversation.register_all_tools'), \
-         patch('mcp_example.examples.claude_conversation.registry.get_all_definitions'), \
+         patch('mcp_example.examples.claude_conversation.registry.list_function_definitions'), \
          patch('mcp_example.core.executor.executor.execute_function'):
         
         # Execute with a simple test message
@@ -111,7 +106,7 @@ async def test_conversation_with_tools_streaming(mock_claude_adapter):
     """Test conversation flow with tools using streaming mode."""
     with patch('mcp_example.examples.claude_conversation.AsyncClaudeAdapter', return_value=mock_claude_adapter), \
          patch('mcp_example.examples.claude_conversation.register_all_tools'), \
-         patch('mcp_example.examples.claude_conversation.registry.get_all_definitions'), \
+         patch('mcp_example.examples.claude_conversation.registry.list_function_definitions'), \
          patch('mcp_example.core.executor.executor.execute_function'):
         
         # Execute with a simple test message
@@ -125,4 +120,7 @@ async def test_conversation_with_tools_streaming(mock_claude_adapter):
         
         # Verify the message contains our test query
         messages = args[0]
-        assert any(message.content == "What's 42 + 7?" for message in messages) 
+        assert any(message.content == "What's 42 + 7?" for message in messages)
+        
+        # Verify extract_function_calls was called to parse the response
+        assert mock_claude_adapter.extract_function_calls.called 

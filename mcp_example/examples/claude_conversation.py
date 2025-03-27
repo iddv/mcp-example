@@ -11,7 +11,7 @@ from typing import List, Optional
 
 from mcp_example.adapters.aws.claude import AsyncClaudeAdapter, ClaudeConfig, ClaudeMessage, ClaudeRole
 from mcp_example.core.registry import registry
-from mcp_example.core.schema import FunctionDefinition
+from mcp_example.core.schema import FunctionCall, FunctionDefinition, StreamingChunk
 from mcp_example.tools import register_all_tools
 
 # Set up logging
@@ -33,7 +33,7 @@ async def conversation_with_tools(user_messages: List[str], streaming: bool = Tr
     register_all_tools()
     
     # Get tool definitions for Claude
-    tool_definitions = registry.get_all_definitions()
+    tool_definitions = registry.list_function_definitions()
     
     # Initialize Claude adapter with default config
     config = ClaudeConfig(
@@ -74,23 +74,39 @@ Use these tools when needed to provide accurate information and perform tasks.
         if streaming:
             # Using streaming for real-time responses
             print("\nClaude (streaming):", end="", flush=True)
+            
+            # To accumulate response content for display
+            content_buffer = ""
+            function_calls_executed = []
+            
             async for chunk in claude.generate_with_streaming(messages, tool_definitions):
-                if chunk.text:
-                    print(chunk.text, end="", flush=True)
+                # Add content to buffer and print
+                if isinstance(chunk.content, str) and chunk.content:
+                    content_buffer += chunk.content
+                    print(chunk.content, end="", flush=True)
                 
-                if chunk.function_calls:
-                    for call in chunk.function_calls:
-                        print(f"\n[Using tool: {call.name}]")
-                        print(f"Parameters: {call.parameters}")
-                        
-                        # Execute the function call
-                        from mcp_example.core.executor import executor
-                        result = executor.execute_function(call)
-                        print(f"Tool result: {result.result}")
-                        
-                        # Add tool result to conversation
-                        tool_message = f"I used the {call.name} tool and got this result: {result.result}"
-                        messages.append(ClaudeMessage(role=ClaudeRole.USER, content=tool_message))
+                # Check for final chunk which may contain function calls
+                if chunk.is_final:
+                    # Extract function calls from the complete response
+                    # This is needed because the StreamingChunk model doesn't directly contain function_calls
+                    mock_response = {"content": content_buffer}  # Simplified mock response
+                    function_calls = claude.extract_function_calls(mock_response)
+                    
+                    # Process function calls
+                    for call in function_calls:
+                        if call.name not in function_calls_executed:
+                            function_calls_executed.append(call.name)
+                            print(f"\n[Using tool: {call.name}]")
+                            print(f"Parameters: {call.parameters}")
+                            
+                            # Execute the function call
+                            from mcp_example.core.executor import executor
+                            result = executor.execute_function(call)
+                            print(f"Tool result: {result.result}")
+                            
+                            # Add tool result to conversation
+                            tool_message = f"I used the {call.name} tool and got this result: {result.result}"
+                            messages.append(ClaudeMessage(role=ClaudeRole.USER, content=tool_message))
             
             print()  # Add a newline after streaming completes
         else:
