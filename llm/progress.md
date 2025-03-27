@@ -13,6 +13,7 @@
 - Set up AWS Bedrock client for AWS integration
 - Created Claude 3.7 integration adapter
 - Implemented example conversation flow with Claude 3.7 and tool usage
+- Added documentation for AWS setup
 
 ## Completed Tasks
 - [x] Project directory structure created (2024-05-22)
@@ -41,11 +42,12 @@
 - [x] Phase 5.2: Create Claude 3.7 integration adapter (2024-06-12)
 - [x] Phase 5.3: Implement streaming response handling (2024-07-04)
 - [x] Phase 5.4: Create example conversation flow with tool usage (2024-07-15)
+- [x] Phase 5.5: Add documentation for AWS setup (2024-07-17)
 
 ## In Progress
 
 ## Next Up
-- [ ] Phase 5.5: Add documentation for AWS setup
+- [ ] Phase 6.1: Write project README with setup instructions
 
 ## Phase 1: Core Protocol Implementation
 - [x] 1.1 Define MCP protocol format (JSON Schema for function definitions)
@@ -80,7 +82,7 @@
 - [x] 5.2 Create Claude 3.7 integration adapter (2024-06-12)
 - [x] 5.3 Implement streaming response handling (2024-07-04)
 - [x] 5.4 Create example conversation flow with tool usage (2024-07-15)
-- [ ] 5.5 Add documentation for AWS setup
+- [x] 5.5 Add documentation for AWS setup (2024-07-17)
 
 ## Phase 6: Documentation and Examples
 - [ ] 6.1 Write project README with setup instructions
