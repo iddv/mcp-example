@@ -15,6 +15,7 @@
 - Implemented example conversation flow with Claude 3.7 and tool usage
 - Added documentation for AWS setup
 - Created tutorial for adding new tools
+- Documented server API endpoints
 
 ## Completed Tasks
 - [x] Project directory structure created (2024-05-22)
@@ -46,11 +47,13 @@
 - [x] Phase 5.5: Add documentation for AWS setup (2024-07-17)
 - [x] Phase 6.1: Write project README with setup instructions (2024-08-13)
 - [x] Phase 6.2: Create tutorial for adding new tools (2024-08-27)
+- [x] Phase 6.3: Document server API endpoints (2024-09-10)
 
 ## In Progress
 
 ## Next Up
-- [ ] Phase 6.3: Document server API endpoints
+- [ ] Phase 6.4: Add example scripts for common use cases
+- [ ] Phase 6.5: Include deployment examples for AWS
 
 ## Phase 1: Core Protocol Implementation
 - [x] 1.1 Define MCP protocol format (JSON Schema for function definitions)
@@ -90,6 +93,6 @@
 ## Phase 6: Documentation and Examples
 - [x] 6.1 Write project README with setup instructions
 - [x] 6.2 Create tutorial for adding new tools
-- [ ] 6.3 Document server API endpoints
+- [x] 6.3 Document server API endpoints
 - [ ] 6.4 Add example scripts for common use cases
 - [ ] 6.5 Include deployment examples for AWS 
