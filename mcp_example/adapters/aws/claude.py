@@ -225,6 +225,10 @@ class ClaudeAdapter:
         body = self._prepare_request_body(messages, functions)
         call_id = str(uuid.uuid4())
         
+        # Track partial content to accumulate function calls
+        partial_content = ""
+        partial_tool_calls = []
+        
         for chunk in self.bedrock_client.invoke_model_with_response_stream(
             model_id=self.config.model_id,
             body=body,
@@ -239,15 +243,53 @@ class ClaudeAdapter:
                 status = "error"
                 is_final = True
             
+            # Extract content from chunk
+            content = ""
+            
+            # Handle different chunk types
+            if chunk.get("type") == "content_block_delta":
+                delta = chunk.get("delta", {})
+                if delta.get("type") == "text_delta":
+                    content = delta.get("text", "")
+                    partial_content += content
+                elif delta.get("type") == "tool_use":
+                    # Store tool use delta for later processing
+                    partial_tool_calls.append(delta.get("tool_use", {}))
+            elif chunk.get("type") == "content_block_start":
+                block = chunk.get("content_block", {})
+                if block.get("type") == "text":
+                    content = block.get("text", "")
+                    partial_content += content
+                elif block.get("type") == "tool_use":
+                    # Store tool use for later processing
+                    partial_tool_calls.append(block.get("tool_use", {}))
+            
+            # For message_stop, include any parsed function calls
+            function_calls = []
+            if is_final and partial_tool_calls:
+                for tool_use in partial_tool_calls:
+                    name = tool_use.get("name", "")
+                    parameters = tool_use.get("parameters", {})
+                    
+                    if name:
+                        function_calls.append(FunctionCall(
+                            name=name,
+                            parameters=parameters,
+                        ))
+            
             # Create StreamingChunk with required fields
             streaming_chunk = StreamingChunk(
                 chunk_id=str(uuid.uuid4()),
                 call_id=call_id,
-                content=chunk.get("content", ""),
+                content=chunk.get("content", content),  # Use existing content field if available
                 is_final=is_final,
                 error=error,
                 status=status
             )
+            
+            # If final chunk, include full content and any function calls
+            if is_final and partial_content:
+                streaming_chunk.content = partial_content
             
             yield streaming_chunk
     
@@ -334,6 +376,10 @@ class AsyncClaudeAdapter:
         body = self.sync_adapter._prepare_request_body(messages, functions)
         call_id = str(uuid.uuid4())
         
+        # Track partial content to accumulate function calls
+        partial_content = ""
+        partial_tool_calls = []
+        
         async for chunk in self.bedrock_client.invoke_model_with_response_stream(
             model_id=self.config.model_id,
             body=body,
@@ -348,15 +394,53 @@ class AsyncClaudeAdapter:
                 status = "error"
                 is_final = True
             
+            # Extract content from chunk
+            content = ""
+            
+            # Handle different chunk types
+            if chunk.get("type") == "content_block_delta":
+                delta = chunk.get("delta", {})
+                if delta.get("type") == "text_delta":
+                    content = delta.get("text", "")
+                    partial_content += content
+                elif delta.get("type") == "tool_use":
+                    # Store tool use delta for later processing
+                    partial_tool_calls.append(delta.get("tool_use", {}))
+            elif chunk.get("type") == "content_block_start":
+                block = chunk.get("content_block", {})
+                if block.get("type") == "text":
+                    content = block.get("text", "")
+                    partial_content += content
+                elif block.get("type") == "tool_use":
+                    # Store tool use for later processing
+                    partial_tool_calls.append(block.get("tool_use", {}))
+            
+            # For message_stop, include any parsed function calls
+            function_calls = []
+            if is_final and partial_tool_calls:
+                for tool_use in partial_tool_calls:
+                    name = tool_use.get("name", "")
+                    parameters = tool_use.get("parameters", {})
+                    
+                    if name:
+                        function_calls.append(FunctionCall(
+                            name=name,
+                            parameters=parameters,
+                        ))
+            
             # Create StreamingChunk with required fields
             streaming_chunk = StreamingChunk(
                 chunk_id=str(uuid.uuid4()),
                 call_id=call_id,
-                content=chunk.get("content", ""),
+                content=chunk.get("content", content),  # Use existing content field if available
                 is_final=is_final,
                 error=error,
                 status=status
             )
+            
+            # If final chunk, include full content and any function calls
+            if is_final and partial_content:
+                streaming_chunk.content = partial_content
             
             yield streaming_chunk
     

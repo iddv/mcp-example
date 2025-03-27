@@ -40,10 +40,10 @@
 - [x] Phase 5.2: Create Claude 3.7 integration adapter (2024-06-12)
 
 ## In Progress
-- [ ] Phase 5.3: Implement streaming response handling
+- [x] Phase 5.3: Implement streaming response handling (2024-07-04)
 
 ## Next Up
-- [ ] Phase 6: Documentation and Examples
+- [ ] Phase 5.4: Create example conversation flow with tool usage
 
 ## Phase 1: Core Protocol Implementation
 - [x] 1.1 Define MCP protocol format (JSON Schema for function definitions)
@@ -74,9 +74,9 @@
 - [x] 4.5 Implement tool result caching
 
 ## Phase 5: AWS Bedrock Integration
-- [x] 5.1 Set up AWS Bedrock client
-- [x] 5.2 Create Claude 3.7 integration adapter
-- [ ] 5.3 Implement streaming response handling
+- [x] 5.1 Set up AWS Bedrock client (2024-06-10)
+- [x] 5.2 Create Claude 3.7 integration adapter (2024-06-12)
+- [x] 5.3 Implement streaming response handling (2024-07-04)
 - [ ] 5.4 Create example conversation flow with tool usage
 - [ ] 5.5 Add documentation for AWS setup
 
