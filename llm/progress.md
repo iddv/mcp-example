@@ -50,6 +50,7 @@
 - [x] Phase 6.2: Create tutorial for adding new tools (2024-08-27)
 - [x] Phase 6.3: Document server API endpoints (2024-09-10)
 - [x] Phase 6.4: Add example scripts for common use cases (2024-09-12)
+- [x] Phase 6.5: Include deployment examples for AWS (2024-09-15)
 
 ## In Progress
 
@@ -96,4 +97,4 @@
 - [x] 6.2 Create tutorial for adding new tools
 - [x] 6.3 Document server API endpoints
 - [x] 6.4 Add example scripts for common use cases
-- [ ] 6.5 Include deployment examples for AWS 
+- [x] 6.5 Include deployment examples for AWS 
