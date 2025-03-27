@@ -12,6 +12,7 @@
 - Implemented tool result caching for improved performance
 - Set up AWS Bedrock client for AWS integration
 - Created Claude 3.7 integration adapter
+- Implemented example conversation flow with Claude 3.7 and tool usage
 
 ## Completed Tasks
 - [x] Project directory structure created (2024-05-22)
@@ -38,12 +39,13 @@
 - [x] Phase 4.5: Implement tool result caching (2024-06-06)
 - [x] Phase 5.1: Set up AWS Bedrock client (2024-06-10)
 - [x] Phase 5.2: Create Claude 3.7 integration adapter (2024-06-12)
+- [x] Phase 5.3: Implement streaming response handling (2024-07-04)
+- [x] Phase 5.4: Create example conversation flow with tool usage (2024-07-15)
 
 ## In Progress
-- [x] Phase 5.3: Implement streaming response handling (2024-07-04)
 
 ## Next Up
-- [ ] Phase 5.4: Create example conversation flow with tool usage
+- [ ] Phase 5.5: Add documentation for AWS setup
 
 ## Phase 1: Core Protocol Implementation
 - [x] 1.1 Define MCP protocol format (JSON Schema for function definitions)
@@ -77,7 +79,7 @@
 - [x] 5.1 Set up AWS Bedrock client (2024-06-10)
 - [x] 5.2 Create Claude 3.7 integration adapter (2024-06-12)
 - [x] 5.3 Implement streaming response handling (2024-07-04)
-- [ ] 5.4 Create example conversation flow with tool usage
+- [x] 5.4 Create example conversation flow with tool usage (2024-07-15)
 - [ ] 5.5 Add documentation for AWS setup
 
 ## Phase 6: Documentation and Examples
