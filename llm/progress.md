@@ -43,11 +43,12 @@
 - [x] Phase 5.3: Implement streaming response handling (2024-07-04)
 - [x] Phase 5.4: Create example conversation flow with tool usage (2024-07-15)
 - [x] Phase 5.5: Add documentation for AWS setup (2024-07-17)
+- [x] Phase 6.1: Write project README with setup instructions (2024-08-13)
 
 ## In Progress
 
 ## Next Up
-- [ ] Phase 6.1: Write project README with setup instructions
+- [ ] Phase 6.2: Create tutorial for adding new tools
 
 ## Phase 1: Core Protocol Implementation
 - [x] 1.1 Define MCP protocol format (JSON Schema for function definitions)

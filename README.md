@@ -279,6 +279,115 @@ Cache behavior:
 - Parameters are normalized for consistent caching regardless of order
 - Caching can be disabled globally or for individual requests
 
+### AWS Bedrock and Claude 3.7 Integration
+
+The MCP implementation includes integration with AWS Bedrock and specifically with Claude 3.7. This allows you to leverage Claude's advanced capabilities for natural language understanding and function calling while using the standard MCP tools.
+
+#### Setting Up AWS Bedrock
+
+1. **Create an AWS Account and Enable Bedrock**:
+   - Sign up for AWS if you don't have an account
+   - Navigate to AWS Bedrock service
+   - Request access to the Claude 3.7 model (may require approval)
+
+2. **Configure AWS Credentials**:
+   ```bash
+   export AWS_ACCESS_KEY_ID="your-access-key"
+   export AWS_SECRET_ACCESS_KEY="your-secret-key"
+   export AWS_DEFAULT_REGION="us-west-2"  # or your preferred region
+   ```
+
+#### Using Claude 3.7 with MCP
+
+Basic usage example:
+
+```python
+from mcp_example.adapters.aws.claude import ClaudeAdapter, ClaudeMessage, ClaudeRole
+from mcp_example.core.schema import FunctionDefinition
+
+# Create a Claude adapter
+adapter = ClaudeAdapter()
+
+# Create messages for Claude
+messages = [
+    ClaudeMessage(role=ClaudeRole.USER, content="What's 42 + 7?")
+]
+
+# Define a calculator function that Claude can call
+calculator_function = FunctionDefinition(
+    name="calculator",
+    description="Performs arithmetic operations",
+    parameters={
+        "type": "object",
+        "properties": {
+            "operation": {
+                "type": "string",
+                "enum": ["add", "subtract", "multiply", "divide"],
+                "description": "The operation to perform"
+            },
+            "a": {"type": "number", "description": "First operand"},
+            "b": {"type": "number", "description": "Second operand"}
+        },
+        "required": ["operation", "a", "b"]
+    }
+)
+
+# Generate a response with function calling
+response = adapter.generate(messages, functions=[calculator_function])
+
+# Extract function calls
+function_calls = adapter.extract_function_calls(response)
+for call in function_calls:
+    print(f"Function: {call.name}, Parameters: {call.parameters}")
+```
+
+#### Interactive Conversation Example
+
+You can run an interactive conversation with Claude 3.7 that uses tools as follows:
+
+```python
+import asyncio
+from mcp_example.examples.claude_conversation import conversation_with_tools
+
+# Define user messages
+messages = [
+    "What's 128 divided by 4?",
+    "Convert 'hello world' to uppercase.",
+    "What is the square root of 144?"
+]
+
+# Run the conversation with streaming enabled
+asyncio.run(conversation_with_tools(messages, streaming=True))
+```
+
+This will produce an interactive conversation where Claude uses the appropriate tools to respond to user queries.
+
+#### Streaming with Claude
+
+Claude 3.7 supports streaming responses, which is especially useful for long-form content:
+
+```python
+from mcp_example.adapters.aws.claude import AsyncClaudeAdapter, ClaudeMessage, ClaudeRole
+
+# Create async adapter
+adapter = AsyncClaudeAdapter()
+
+# Create messages
+messages = [
+    ClaudeMessage(role=ClaudeRole.USER, content="Explain quantum computing in simple terms.")
+]
+
+# Stream the response
+async for chunk in adapter.generate_with_streaming(messages):
+    if chunk.content:
+        print(chunk.content, end="", flush=True)
+```
+
+For more detailed information on AWS setup and Claude integration, refer to the documentation in the `llm/` directory:
+- `aws_setup.md`: Detailed AWS configuration instructions
+- `claude_integration.md`: Claude API integration details
+- `claude_conversation.md`: Conversation flow implementation
+
 ### Proxy Tool
 
 The proxy tool enables forwarding function calls to remote MCP servers, allowing access to tools that are available on other servers without implementing them directly:
