@@ -38,6 +38,31 @@ websockets = "^12.0"
 
 ## 🏗️ Server Architecture
 
+### 🎯 Template vs Example Approach
+
+This repository provides two perfect starting points:
+
+1. **📄 [template_server.py](examples/servers/template_server.py)** - Clean starting canvas
+   - All boilerplate code ready
+   - Placeholder functions with TODOs
+   - Enterprise features ready to enable
+   - Comprehensive comments and documentation
+
+2. **🎮 [minesweeper_server.py](examples/servers/minesweeper_server.py)** - Complex working example  
+   - Real game logic implementation
+   - Advanced patterns and techniques
+   - Production-ready enterprise features
+   - Learn by studying the implementation
+
+**Recommended workflow:**
+```bash
+# Copy the template for your new server
+cp examples/servers/template_server.py my_new_server.py
+
+# Study the complex example for patterns
+# Open minesweeper_server.py in another tab for reference
+```
+
 ### Basic Server Template
 ```python
 #!/usr/bin/env python3

@@ -83,9 +83,10 @@ python examples/clients/basic_client.py
 ```
 examples/
 ├── servers/
+│   ├── template_server.py       # 📄 Clean template - your starting canvas!
+│   ├── minesweeper_server.py    # 🎯 Complex example - learn from this!
 │   ├── basic_server.py          # Simple MCP server (official SDK)
 │   ├── filesystem_server.py     # File operations server
-│   ├── minesweeper_server.py    # 🎯 Ultimate game server (FastMCP 2.0)
 │   └── comprehensive_server.py  # Full feature showcase
 ├── clients/
 │   └── basic_client.py          # MCP client examples
@@ -165,10 +166,27 @@ def get_server_info() -> str:
 
 **This repository is optimized for AI agents to build MCP servers!**
 
-### 📖 Complete Guides
+### 🎯 Perfect Learning Setup
+- **📄 [template_server.py](examples/servers/template_server.py)** - Clean starting canvas with all boilerplate
+- **🎮 [minesweeper_server.py](examples/servers/minesweeper_server.py)** - Complex working example to learn from  
+- **📚 Complete Guides** - Step-by-step instructions and patterns
+
+### 🚀 Quick Start for AI Agents
+```bash
+# Copy the template and start building
+cp examples/servers/template_server.py my_awesome_server.py
+
+# Study the complex example for patterns
+cat examples/servers/minesweeper_server.py
+
+# Read the building guides
+cat FASTMCP_AI_AGENT_GUIDE.md
+```
+
+### 📖 Complete Documentation
 - **[FastMCP 2.0 AI Agent Guide](FASTMCP_AI_AGENT_GUIDE.md)** - Enterprise server building
 - **[AI Agent Instructions](AI_AGENT_INSTRUCTIONS.md)** - Step-by-step templates
-- **Live Examples** - Copy and modify working servers
+- **[Template Server](examples/servers/template_server.py)** - Ready-to-use starting point
 
 ### 🎯 Use Cases
 - **Game Servers**: Interactive entertainment with real-time state
@@ -394,14 +412,18 @@ MIT License - build whatever you want! See [LICENSE](LICENSE) for details.
 ## 🎯 Ready to Build?
 
 ```bash
-# Start with Minesweeper
+# 📄 Start with the clean template (recommended)
+cp examples/servers/template_server.py my_server.py
+mcp dev my_server.py
+
+# 🎮 Study the complex example
 mcp dev examples/servers/minesweeper_server.py
 
-# Read the AI agent guide
+# 📚 Read the building guides
 cat FASTMCP_AI_AGENT_GUIDE.md
 
-# Build your own server
-cp examples/servers/minesweeper_server.py my_server.py
+# 🚀 Test your creation
+python my_server.py --transport http --port 8000
 ```
 
 **🚀 Happy building! Let's make MCP servers that are both powerful and fun!** 🎮
