@@ -1,527 +1,407 @@
-# Model Context Protocol (MCP) Example
+# 🎯 MCP Examples - Enterprise Edition
 
-A reference implementation of the Model Context Protocol (MCP) for tool calling between LLMs and applications.
+> **🚀 FastMCP 2.0 powered examples for building sophisticated Model Context Protocol servers**
 
-## Overview
+Welcome to the ultimate MCP examples repository! Build enterprise-grade AI servers with our **living Minesweeper example** and comprehensive FastMCP 2.0 templates.
 
-This project serves as both a client and server implementation of the Model Context Protocol. It demonstrates:
-- Local tool calling via stdio
-- Remote tool calling via HTTP
-- Integration with AWS Bedrock and Claude 3.7
+[![FastMCP](https://img.shields.io/badge/FastMCP-2.7.1-blue?style=for-the-badge)](https://github.com/jlowin/fastmcp)
+[![Python](https://img.shields.io/badge/Python-3.10+-green?style=for-the-badge)](https://python.org)
+[![MCP](https://img.shields.io/badge/MCP-Compatible-purple?style=for-the-badge)](https://modelcontextprotocol.io)
 
-The Model Context Protocol facilitates interaction between LLMs and tools or applications by defining standard formats for function definitions, function calls, and responses.
+## ✨ What's New in This Edition
 
-## AI-Assisted Development
+🎮 **Living Game Example**: Watch LLMs master Minesweeper through logical reasoning  
+🚀 **FastMCP 2.0**: Enterprise features with multiple transport protocols  
+🏢 **Production Ready**: Authentication, sessions, real-time data, WebSocket support  
+🤖 **AI Agent Friendly**: Complete templates and guides for automated server generation  
 
-This project was created with the assistance of Claude 3.7, Anthropic's advanced AI assistant. The planning, implementation strategy, and technical decisions are documented in the `llm/` directory, which contains:
-- Design specifications
-- Implementation plans
-- Technical decisions
-- Development progress
+## 🎯 Featured: Minesweeper MCP Server
 
-These documents provide insight into the AI-assisted development process and can serve as a reference for similar projects.
+**The ultimate demonstration of AI logical reasoning!**
 
-## Project Structure
+```bash
+# Start the Minesweeper server
+mcp dev examples/servers/minesweeper_server.py
 
-```
-mcp-example/
-├── core/                 # Core protocol implementation
-│   ├── schema.py         # Protocol schema definitions
-│   ├── validation.py     # Schema validation utilities
-│   ├── registry.py       # Tool registry
-│   └── executor.py       # Tool executor
-├── tools/                # Tool implementations
-│   ├── calculator.py     # Calculator tool
-│   └── text.py           # Text processing tool
-├── adapters/             # Interface adapters
-│   ├── stdio/            # Command-line interface
-│   └── http/             # HTTP client for remote servers
-├── server/               # Server implementation
-│   ├── app.py            # FastAPI server
-│   └── main.py           # Server runner
-├── examples/             # Usage examples
-├── tests/                # Test suite
-└── llm/                  # Implementation documentation
+# Or run as HTTP server
+python examples/servers/minesweeper_server.py --transport http --port 8000
 ```
 
-## Getting Started
+**Watch an LLM play Minesweeper:**
+```python
+# Start a new expert game
+new_game("expert")  # 30x16 grid, 99 mines!
+
+# Get AI-powered strategic hints  
+get_hint(game_id)   # Returns probability analysis
+
+# Make strategic moves
+reveal(game_id, x, y)  # Uncover cells
+flag(game_id, x, y)    # Mark mines
+
+# Analyze the board
+analyze_board(game_id)  # Full probability matrix
+```
+
+![Minesweeper Demo](https://img.shields.io/badge/🎮-Interactive_Demo-brightgreen?style=for-the-badge)
+
+## 🚀 Quick Start
 
 ### Prerequisites
-
-- Python 3.10 or higher
-- Poetry (for dependency management)
+- **Python 3.10+** (FastMCP 2.0 requirement)
+- **Poetry** (recommended) or pip
 
 ### Installation
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/mcp-example.git
-   cd mcp-example
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/mcp-examples.git
+cd mcp-examples
 
-2. Set up a virtual environment and install dependencies:
+# Install with Poetry (recommended)
+poetry install
 
-   Option 1: Using Poetry (recommended):
-   ```
-   poetry install
-   ```
-
-   Option 2: Using venv:
-   ```
-   python3 -m venv venv
-   source venv/bin/activate  # On Windows, use: venv\Scripts\activate
-   pip install -e .
-   ```
-
-### Running the CLI
-
-The command-line interface provides a way to interact with tools locally:
-
-```
-# With Poetry
-poetry run python -m mcp_example.adapters.stdio.cli
-
-# With venv
-python -m mcp_example.adapters.stdio.cli
+# Or with pip
+pip install -e .
 ```
 
-This will start a REPL where you can:
-- List available tools with the `list` command
-- Call tools directly with JSON syntax: `{"name": "calculator", "parameters": {"operation": "add", "a": 5, "b": 3}}`
-- Get help with the `help` command
+### 🎮 Try the Minesweeper Server
 
-### Running the Server
+```bash
+# Development mode with MCP inspector
+mcp dev examples/servers/minesweeper_server.py
 
-The FastAPI server provides a remote API for tool calling:
+# HTTP server for web integration
+python examples/servers/minesweeper_server.py --transport http --port 8000
 
-```
-# With Poetry
-poetry run python -m mcp_example.server.main --host 0.0.0.0 --port 8000
-
-# With venv
-python -m mcp_example.server.main --host 0.0.0.0 --port 8000
+# Test with the basic client
+python examples/clients/basic_client.py
 ```
 
-By default, this starts a server on `http://127.0.0.1:8000`. You can access API documentation at `http://127.0.0.1:8000/docs`.
+## 📁 Project Structure
 
-Server options:
-- `--host`: Host to bind to (default: 127.0.0.1)
-- `--port`: Port to listen on (default: 8000)
-- `--reload`: Enable auto-reload for development
-- `--log-level`: Set logging level (debug, info, warning, error)
+```
+examples/
+├── servers/
+│   ├── basic_server.py          # Simple MCP server (official SDK)
+│   ├── filesystem_server.py     # File operations server
+│   ├── minesweeper_server.py    # 🎯 Ultimate game server (FastMCP 2.0)
+│   └── comprehensive_server.py  # Full feature showcase
+├── clients/
+│   └── basic_client.py          # MCP client examples
+└── configs/
+    ├── claude_desktop_config.json
+    └── README.md
 
-### Testing the Server
+# Documentation
+├── FASTMCP_AI_AGENT_GUIDE.md    # Complete FastMCP 2.0 guide
+├── AI_AGENT_INSTRUCTIONS.md     # Instructions for AI agents
+└── CLAUDE.md                    # Project guidelines
+```
 
-Once the server is running, you can test it using curl:
+## 🎮 Minesweeper Server Features
 
-1. List available functions:
-   ```
-   curl -X GET http://localhost:8000/api/functions -H "X-API-Key: test-key"
-   ```
+### 🧠 AI-Powered Gameplay
+- **Strategic Tools**: `new_game()`, `reveal()`, `flag()`, `get_hint()`
+- **Analysis Tools**: `analyze_board()`, probability calculations
+- **Learning Resources**: Strategy guides, pattern libraries, tutorials
 
-2. Call the calculator function:
-   ```
-   curl -X POST http://localhost:8000/api/functions/call \
-     -H "X-API-Key: test-key" \
-     -H "Content-Type: application/json" \
-     -d '{"name": "calculator", "parameters": {"operation": "add", "a": 5, "b": 3}}'
-   ```
+### 🏢 Enterprise Features
+- **Multiple Transports**: stdio, HTTP, WebSocket ready
+- **Session Management**: Multiple concurrent games
+- **Real-time Updates**: Live game state streaming
+- **Authentication Ready**: OAuth 2.0 support built-in
+- **Statistics**: Global leaderboards and analytics
 
-3. Transform text to uppercase:
-   ```
-   curl -X POST http://localhost:8000/api/functions/call \
-     -H "X-API-Key: test-key" \
-     -H "Content-Type: application/json" \
-     -d '{"name": "transform_text", "parameters": {"operation": "uppercase", "text": "hello world"}}'
-   ```
+### 📚 Educational Resources
+- **Strategy Guide**: Master-level Minesweeper techniques
+- **Pattern Library**: Common configurations and solutions
+- **AI Prompts**: Teaching assistant for learning players
+- **Probability Analysis**: Mathematical approach to decision making
 
-4. Analyze text:
-   ```
-   curl -X POST http://localhost:8000/api/functions/call \
-     -H "X-API-Key: test-key" \
-     -H "Content-Type: application/json" \
-     -d '{"name": "analyze_text", "parameters": {"text": "Hello world. This is a test."}}'
-   ```
+## 🔧 Server Examples
 
-### Troubleshooting
-
-If you encounter any issues:
-
-1. Make sure all dependencies are installed:
-   ```
-   pip list | grep uvicorn  # Should show uvicorn is installed
-   ```
-
-2. Check for circular import errors in the logs:
-   ```
-   python -m mcp_example.server.main --log-level debug
-   ```
-
-3. Verify the API key is included in your requests (default is "test-key")
-
-### API Endpoints
-
-The server provides the following endpoints:
-
-- `GET /api/functions`: List all available functions
-- `GET /api/functions/{name}`: Get a specific function definition
-- `POST /api/functions/call`: Call a function
-- `POST /api/tools/call`: Call a tool
-- `POST /api/execute`: Execute a function call from text
-- `WebSocket /api/functions/stream`: Stream function results
-- `WebSocket /api/tools/stream`: Stream tool results
-
-### Using the HTTP Client
-
-To call the server from a Python application:
-
+### 🎯 Minesweeper (FastMCP 2.0)
 ```python
-from mcp_example.adapters.http.client import MCPClient
+from fastmcp import FastMCP
 
-# Create client
-client = MCPClient(
-    base_url="http://localhost:8000",
-    api_key="test-key"  # Use the default test key
-)
+mcp = FastMCP("🎯 Minesweeper Pro")
 
-# List available functions
-functions = client.list_functions()
-for func in functions:
-    print(f"{func.name}: {func.description}")
+@mcp.tool
+def new_game(difficulty: str = "beginner") -> dict:
+    """🎮 Start a new Minesweeper game!"""
+    game_id = game_engine.create_game(difficulty)
+    return {"game_id": game_id, "message": "Good luck! 🎯"}
 
-# Call a function
-response = client.call_function(
-    name="calculator",
-    parameters={"operation": "add", "a": 5, "b": 3}
-)
-print(f"Result: {response.result}")
+@mcp.resource("game://state/{game_id}")
+def get_game_state(game_id: str) -> str:
+    """Real-time game state resource."""
+    return format_game_display(game_id)
+
+@mcp.prompt
+def strategy_guide(situation: str) -> str:
+    """Generate strategic analysis for current situation."""
+    return f"Strategic guidance for: {situation}..."
 ```
 
-### WebSocket Streaming
-
-The MCP implementation supports streaming results from long-running operations using WebSockets. This is particularly useful for:
-- Functions that produce incremental results
-- Long-running operations where progress updates are valuable
-- Real-time user interfaces that need to display partial results
-
-The AsyncMCPClient provides methods for streaming function and tool results:
-
+### 🔧 Basic Server (Official SDK)
 ```python
-import asyncio
-from mcp_example.adapters.http.client import AsyncMCPClient
+from mcp.server.fastmcp import FastMCP
 
-async def main():
-    # Create async client
-    client = AsyncMCPClient("http://localhost:8000", api_key="test-key")
+mcp = FastMCP("Basic Example Server")
+
+@mcp.tool()
+def add_numbers(a: float, b: float) -> float:
+    """Add two numbers together."""
+    return a + b
+
+@mcp.resource("info://server")
+def get_server_info() -> str:
+    """Server information resource."""
+    return "Basic MCP Server Example..."
+```
+
+## 🤖 For AI Agents
+
+**This repository is optimized for AI agents to build MCP servers!**
+
+### 📖 Complete Guides
+- **[FastMCP 2.0 AI Agent Guide](FASTMCP_AI_AGENT_GUIDE.md)** - Enterprise server building
+- **[AI Agent Instructions](AI_AGENT_INSTRUCTIONS.md)** - Step-by-step templates
+- **Live Examples** - Copy and modify working servers
+
+### 🎯 Use Cases
+- **Game Servers**: Interactive entertainment with real-time state
+- **Data Processing**: Complex analysis with streaming results  
+- **API Integration**: External service coordination
+- **Educational Tools**: Interactive learning systems
+- **Productivity Apps**: Task management and automation
+
+## 🏢 Enterprise Features (FastMCP 2.0)
+
+### 🚀 Multiple Transports
+```python
+# Development: stdio (default)
+mcp.run()
+
+# Production: HTTP with streaming
+mcp.run(transport="streamable-http", host="0.0.0.0", port=8000)
+
+# WebSocket support ready
+mcp.run(transport="websocket", host="127.0.0.1", port=8080)
+```
+
+### 🔐 Authentication & Security
+```python
+@mcp.set_auth_config
+def auth_config():
+    return {
+        "authorization_url": "https://your-auth.com/oauth/authorize",
+        "token_url": "https://your-auth.com/oauth/token",
+        "client_id": os.getenv("CLIENT_ID"),
+        "scopes": ["read", "write", "admin"]
+    }
+```
+
+### 📊 Real-time Data & Sessions
+```python
+@mcp.tool
+async def create_session(user_id: str, data: dict) -> dict:
+    """Create stateful user sessions."""
+    session_id = str(uuid.uuid4())
+    _sessions[session_id] = {"user": user_id, "data": data}
+    return {"session_id": session_id}
+
+@mcp.resource("stream://live-data")
+async def live_data() -> str:
+    """Streaming real-time data."""
+    return f"Live update: {time.time()}"
+```
+
+## 🔧 Development Commands
+
+```bash
+# Development & Testing
+mcp dev examples/servers/minesweeper_server.py
+mcp dev examples/servers/basic_server.py
+
+# HTTP Servers
+python examples/servers/minesweeper_server.py --transport http --port 8000
+python examples/servers/comprehensive_server.py --http --port 8080
+
+# Install for Claude Desktop
+mcp install examples/servers/minesweeper_server.py
+
+# Run tests
+poetry run pytest
+poetry run pytest --cov=examples
+
+# Code quality
+poetry run black .
+poetry run isort .
+poetry run ruff check .
+poetry run mypy .
+```
+
+## 🎯 Claude Desktop Integration
+
+1. **Copy configuration** from `examples/configs/claude_desktop_config.json`
+2. **Update server paths** to match your setup:
+
+```json
+{
+  "mcpServers": {
+    "minesweeper": {
+      "command": "python",
+      "args": ["/path/to/examples/servers/minesweeper_server.py"]
+    },
+    "filesystem": {
+      "command": "python", 
+      "args": ["/path/to/examples/servers/filesystem_server.py"]
+    }
+  }
+}
+```
+
+3. **Restart Claude Desktop** and start playing! 🎮
+
+## 🎮 Minesweeper Gameplay Examples
+
+### 🎯 Start Playing
+```python
+# Create a new game
+result = new_game("intermediate")  # 16x16, 40 mines
+game_id = result["game_id"]
+
+# Make your first move
+reveal(game_id, 8, 8)  # Start in the center
+
+# Get strategic advice
+hint = get_hint(game_id)
+# Returns: {"action": "reveal", "x": 5, "y": 3, "reason": "0% mine probability"}
+```
+
+### 🧮 Advanced Analysis
+```python
+# Full probability analysis
+analysis = analyze_board(game_id)
+# Returns probability matrix for all hidden cells
+
+# Strategic guidance
+prompt = analyze_strategy(game_id, "stuck on complex constraint")
+# Returns step-by-step strategic guidance
+```
+
+### 📊 Statistics & Learning
+```python
+# Check your progress
+stats = list_games()
+# Shows win rate, best times, active games
+
+# Learn from the masters
+guide = get_strategy_guide()
+# Comprehensive strategy documentation
+```
+
+## 🧪 Testing Your Servers
+
+### 🔍 MCP Inspector
+```bash
+# Test any server interactively
+mcp dev examples/servers/minesweeper_server.py
+mcp dev examples/servers/basic_server.py
+```
+
+### 🤖 Programmatic Testing
+```python
+# Test with FastMCP's built-in testing
+from fastmcp.testing import create_test_client
+
+async def test_minesweeper():
+    client = create_test_client(mcp)
     
-    # Stream results from a long-running function
-    print("Streaming function results:")
-    async for chunk in client.stream_function(
-        name="long_running_operation",
-        parameters={"duration": 5}
-    ):
-        # Process each chunk as it arrives
-        if chunk.status == "in_progress":
-            print(f"Progress: {chunk.result}")
-        elif chunk.status == "complete":
-            print(f"Final result: {chunk.result}")
-        elif chunk.status == "error":
-            print(f"Error: {chunk.error}")
+    # Test game creation
+    result = await client.call_tool("new_game", {"difficulty": "beginner"})
+    assert result["success"] == True
     
-    await client.close()
-
-if __name__ == "__main__":
-    asyncio.run(main())
+    # Test resources
+    info = await client.get_resource("stats://global")
+    assert "Statistics" in info
 ```
 
-Each streaming chunk contains:
-- `id`: Unique identifier for the chunk
-- `status`: Status of the operation ("in_progress", "complete", or "error")
-- `result`: Partial or final result data
-- `error`: Error information if status is "error"
-- `timestamp`: When the chunk was created
+## 🌟 What Makes This Special
 
-### Tool Result Caching
+### 🎮 Living Examples
+- **Interactive Gameplay**: Watch LLMs learn and strategize
+- **Real-time State**: See decision-making processes unfold
+- **Educational Value**: Understand AI reasoning through play
 
-The HTTP client supports caching of tool and function results to improve performance and reduce redundant network calls. This is particularly useful for idempotent operations or when the same tool is called repeatedly with identical parameters.
+### 🏢 Enterprise Ready
+- **Production Deployment**: HTTP servers, authentication, sessions
+- **Scalable Architecture**: Multiple transports, WebSocket support  
+- **Monitoring & Analytics**: Built-in statistics and performance tracking
 
-To use caching with the HTTP client:
+### 🤖 AI Agent Optimized
+- **Complete Templates**: Copy-paste server generators
+- **Comprehensive Docs**: Everything needed for autonomous building
+- **Best Practices**: Security, error handling, testing patterns
 
-```python
-# Create client with caching options
-client = MCPClient(
-    base_url="http://localhost:8000",
-    api_key="test-key",
-    cache_enabled=True,      # Enable/disable caching (default: True)
-    cache_max_size=100,      # Maximum number of cache entries (default: 100)
-    cache_ttl=300.0          # Cache time-to-live in seconds (default: 300.0)
-)
+## 📚 Learn More
 
-# First call will hit the server
-result1 = client.call_function("calculator.add", {"a": 1, "b": 2})
+- **[FastMCP Documentation](https://gofastmcp.com)** - Official FastMCP 2.0 docs
+- **[MCP Specification](https://spec.modelcontextprotocol.io)** - Protocol specification  
+- **[Official MCP SDK](https://github.com/modelcontextprotocol/python-sdk)** - Python SDK
+- **[MCP Community](https://github.com/modelcontextprotocol)** - Community resources
 
-# Second call with same parameters will use cached result
-result2 = client.call_function("calculator.add", {"a": 1, "b": 2})
+## 🤝 Contributing
 
-# Bypass cache for specific calls
-result3 = client.call_function("calculator.add", {"a": 1, "b": 2}, use_cache=False)
+We welcome contributions! Whether it's:
 
-# Invalidate specific cache entry
-client.invalidate_cache_entry("calculator.add", {"a": 1, "b": 2})
+- 🎮 **New game examples** (Chess, Tic-tac-toe, Sudoku)
+- 🏢 **Enterprise patterns** (Authentication, monitoring, deployment)
+- 🤖 **AI agent tools** (Templates, generators, testing)
+- 📚 **Documentation** (Tutorials, guides, examples)
 
-# Clear entire cache
-client.clear_cache()
+### Guidelines
+- Keep examples **practical and educational**
+- Include **comprehensive documentation**  
+- Follow **security best practices**
+- Add **proper error handling**
+- Use **type hints** throughout
+
+## 🏆 Showcase
+
+**Built something cool with these examples?** We'd love to feature it!
+
+- Enterprise MCP deployments
+- Educational AI systems  
+- Interactive game servers
+- Creative LLM applications
+
+## 📄 License
+
+MIT License - build whatever you want! See [LICENSE](LICENSE) for details.
+
+## 🙏 Acknowledgments
+
+- **[Anthropic](https://anthropic.com)** - For creating MCP and making AI better
+- **[Jeremiah Lowin](https://github.com/jlowin)** - For the amazing FastMCP framework
+- **[MCP Community](https://github.com/modelcontextprotocol)** - For the excellent ecosystem
+- **Contributors** - Who make this repository awesome
+
+---
+
+## 🎯 Ready to Build?
+
+```bash
+# Start with Minesweeper
+mcp dev examples/servers/minesweeper_server.py
+
+# Read the AI agent guide
+cat FASTMCP_AI_AGENT_GUIDE.md
+
+# Build your own server
+cp examples/servers/minesweeper_server.py my_server.py
 ```
 
-Cache behavior:
-- Uses LRU (Least Recently Used) eviction when maximum size is reached
-- Entries automatically expire after the configured TTL
-- Parameters are normalized for consistent caching regardless of order
-- Caching can be disabled globally or for individual requests
-
-### AWS Bedrock and Claude 3.7 Integration
-
-The MCP implementation includes integration with AWS Bedrock and specifically with Claude 3.7. This allows you to leverage Claude's advanced capabilities for natural language understanding and function calling while using the standard MCP tools.
-
-#### Setting Up AWS Bedrock
-
-1. **Create an AWS Account and Enable Bedrock**:
-   - Sign up for AWS if you don't have an account
-   - Navigate to AWS Bedrock service
-   - Request access to the Claude 3.7 model (may require approval)
-
-2. **Configure AWS Credentials**:
-   ```bash
-   export AWS_ACCESS_KEY_ID="your-access-key"
-   export AWS_SECRET_ACCESS_KEY="your-secret-key"
-   export AWS_DEFAULT_REGION="us-west-2"  # or your preferred region
-   ```
-
-#### Using Claude 3.7 with MCP
-
-Basic usage example:
-
-```python
-from mcp_example.adapters.aws.claude import ClaudeAdapter, ClaudeMessage, ClaudeRole
-from mcp_example.core.schema import FunctionDefinition
-
-# Create a Claude adapter
-adapter = ClaudeAdapter()
-
-# Create messages for Claude
-messages = [
-    ClaudeMessage(role=ClaudeRole.USER, content="What's 42 + 7?")
-]
-
-# Define a calculator function that Claude can call
-calculator_function = FunctionDefinition(
-    name="calculator",
-    description="Performs arithmetic operations",
-    parameters={
-        "type": "object",
-        "properties": {
-            "operation": {
-                "type": "string",
-                "enum": ["add", "subtract", "multiply", "divide"],
-                "description": "The operation to perform"
-            },
-            "a": {"type": "number", "description": "First operand"},
-            "b": {"type": "number", "description": "Second operand"}
-        },
-        "required": ["operation", "a", "b"]
-    }
-)
-
-# Generate a response with function calling
-response = adapter.generate(messages, functions=[calculator_function])
-
-# Extract function calls
-function_calls = adapter.extract_function_calls(response)
-for call in function_calls:
-    print(f"Function: {call.name}, Parameters: {call.parameters}")
-```
-
-#### Interactive Conversation Example
-
-You can run an interactive conversation with Claude 3.7 that uses tools as follows:
-
-```python
-import asyncio
-from mcp_example.examples.claude_conversation import conversation_with_tools
-
-# Define user messages
-messages = [
-    "What's 128 divided by 4?",
-    "Convert 'hello world' to uppercase.",
-    "What is the square root of 144?"
-]
-
-# Run the conversation with streaming enabled
-asyncio.run(conversation_with_tools(messages, streaming=True))
-```
-
-This will produce an interactive conversation where Claude uses the appropriate tools to respond to user queries.
-
-#### Streaming with Claude
-
-Claude 3.7 supports streaming responses, which is especially useful for long-form content:
-
-```python
-from mcp_example.adapters.aws.claude import AsyncClaudeAdapter, ClaudeMessage, ClaudeRole
-
-# Create async adapter
-adapter = AsyncClaudeAdapter()
-
-# Create messages
-messages = [
-    ClaudeMessage(role=ClaudeRole.USER, content="Explain quantum computing in simple terms.")
-]
-
-# Stream the response
-async for chunk in adapter.generate_with_streaming(messages):
-    if chunk.content:
-        print(chunk.content, end="", flush=True)
-```
-
-For more detailed information on AWS setup and Claude integration, refer to the documentation in the `llm/` directory:
-- `aws_setup.md`: Detailed AWS configuration instructions
-- `claude_integration.md`: Claude API integration details
-- `claude_conversation.md`: Conversation flow implementation
-
-### Proxy Tool
-
-The proxy tool enables forwarding function calls to remote MCP servers, allowing access to tools that are available on other servers without implementing them directly:
-
-```python
-from mcp_example.core.executor import execute
-from mcp_example.tools.proxy import register
-
-# Ensure the proxy tool is registered
-register()
-
-# Call a function on a remote server
-result = execute({
-    "name": "proxy",
-    "parameters": {
-        "server_url": "http://remote-server.com",
-        "api_key": "remote-server-key", 
-        "function_name": "calculator",
-        "parameters": {
-            "operation": "add",
-            "a": 5,
-            "b": 3
-        }
-    }
-})
-print(f"Result from remote server: {result}")
-```
-
-From the CLI, you can use:
-
-```
-MCP> proxy server_url=http://remote-server.com function_name=calculator parameters={"operation":"add","a":5,"b":3}
-```
-
-### Tool Chaining
-
-The MCP implementation supports chaining tools together to create more complex workflows. There are several approaches to tool chaining:
-
-#### Direct Chaining
-
-```python
-from mcp_example.core.executor import execute
-
-# Step 1: Call the calculator tool
-calc_result = execute({
-    "name": "calculator",
-    "parameters": {
-        "operation": "add",
-        "a": 5,
-        "b": 3
-    }
-})
-
-# Step 2: Use the result in a text tool
-text_result = execute({
-    "name": "transform_text",
-    "parameters": {
-        "operation": "append",
-        "text": "The result is: ",
-        "append_text": str(calc_result)
-    }
-})
-
-print(text_result)  # Output: "The result is: 8"
-```
-
-#### Proxy-Based Chaining
-
-```python
-from mcp_example.core.executor import execute
-from mcp_example.tools.proxy import register
-
-register()  # Ensure the proxy tool is registered
-
-# Step 1: Use proxy tool to call remote function
-remote_result = execute({
-    "name": "proxy",
-    "parameters": {
-        "server_url": "http://remote-server.com",
-        "function_name": "data_service",
-        "parameters": {"query": "get_user_info", "user_id": "12345"}
-    }
-})
-
-# Step 2: Process the remote result locally
-processed_result = execute({
-    "name": "transform_text",
-    "parameters": {
-        "operation": "extract",
-        "text": remote_result["user_data"]["description"],
-        "pattern": r"email: ([\w\.-]+@[\w\.-]+)"
-    }
-})
-
-print(f"Extracted email: {processed_result}")
-```
-
-## Available Tools
-
-### Calculator
-
-Performs basic arithmetic operations:
-- add: Addition (a + b)
-- subtract: Subtraction (a - b)
-- multiply: Multiplication (a * b)
-- divide: Division (a / b)
-- power: Exponentiation (a ^ b)
-- sqrt: Square root (√a)
-- log: Logarithm (log_b(a))
-
-### Text Processing
-
-Provides text transformation and analysis:
-
-Transform operations:
-- uppercase: Convert text to uppercase
-- lowercase: Convert text to lowercase
-- capitalize: Capitalize first letter
-- title: Convert to title case
-- reverse: Reverse text
-- count_chars: Count characters
-- count_words: Count words
-- trim: Remove leading/trailing whitespace
-- replace: Replace text
-
-Text analysis:
-- Provides statistics about text (character count, word count, etc.)
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details. 
+**🚀 Happy building! Let's make MCP servers that are both powerful and fun!** 🎮

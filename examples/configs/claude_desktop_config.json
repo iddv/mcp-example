@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "basic-example": {
+      "command": "python",
+      "args": ["examples/servers/basic_server.py"],
+      "env": {}
+    },
+    "filesystem": {
+      "command": "python", 
+      "args": ["examples/servers/filesystem_server.py"],
+      "env": {}
+    }
+  }
+} 

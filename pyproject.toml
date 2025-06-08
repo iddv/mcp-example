@@ -1,32 +1,35 @@
 [tool.poetry]
-name = "mcp-example"
-version = "0.1.0"
-description = "Model Context Protocol (MCP) reference implementation"
-authors = ["Your Name <your.email@example.com>"]
+name = "mcp-examples"
+version = "0.2.0"
+description = "Sharp, accurate examples for the Model Context Protocol (MCP)"
+authors = ["MCP Examples <examples@mcp.dev>"]
 readme = "README.md"
-packages = [{include = "mcp_example"}]
+packages = [{include = "examples"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-pydantic = "^2.5.0"
-fastapi = "^0.104.0"
-uvicorn = "^0.23.2"
-jsonschema = "^4.19.0"
-websockets = "^11.0.3"
-httpx = "^0.25.0"
-typer = "^0.9.0"
-rich = "^13.5.2"
-boto3 = "^1.28.40"
+# FastMCP 2.0 - Enterprise MCP framework
+fastmcp = "^2.7.1"
+# Keep official SDK for compatibility
+mcp = "^1.9.3"
+# Additional useful libraries for examples
+httpx = "^0.28.1"
+aiofiles = "^24.1.0"
+pydantic = "^2.8.0"
+typer = "^0.15.2"
+rich = "^13.7.0"
+# Game simulation libraries
+asyncio-mqtt = "^0.16.0"
+websockets = "^12.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
 pytest-asyncio = "^0.26.0"
-black = "^23.7.0"
-isort = "^5.12.0"
-mypy = "^1.5.1"
+black = "^24.0.0"
+isort = "^5.13.0"
+mypy = "^1.11.0"
 pytest-cov = "^4.1.0"
-ruff = "^0.0.284"
-types-jsonschema = "^4.19.0.1"
+ruff = "^0.6.0"
 
 [build-system]
 requires = ["poetry-core"]
